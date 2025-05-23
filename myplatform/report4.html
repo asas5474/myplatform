@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>تقرير الحضور والغياب | منصة كلية الإدارة</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Cairo', Arial, sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
+      color: #222;
+      min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(90deg, #2563eb 60%, #1e40af 100%);
+      color: white;
+      padding: 35px 0 25px 0;
+      text-align: center;
+      border-radius: 0 0 30px 30px;
+      box-shadow: 0 4px 16px rgba(30,64,175,0.08);
+    }
+    header h1 {
+      font-size: 2.2rem;
+      margin: 0 0 10px 0;
+      letter-spacing: 1px;
+    }
+    nav {
+      background: #e0e7ff;
+      border-bottom: 2px solid #2563eb;
+      padding: 0;
+      margin-bottom: 0;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin: 0;
+      padding: 0;
+    }
+    nav ul li {
+      display: inline;
+    }
+    nav ul li a {
+      text-decoration: none;
+      color: #1e40af;
+      font-weight: bold;
+      font-size: 1.15rem;
+      padding: 14px 22px;
+      border-radius: 8px 8px 0 0;
+      transition: background 0.2s, color 0.2s;
+      display: inline-block;
+    }
+    nav ul li a:hover, nav ul li a.active {
+      background: #2563eb;
+      color: #fff;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 40px auto 0 auto;
+      background: #fff;
+      padding: 35px 25px;
+      border-radius: 18px;
+      box-shadow: 0 6px 24px rgba(30,64,175,0.07);
+    }
+    h2 {
+      color: #2563eb;
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 1.4rem;
+    }
+    .attendance-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    .attendance-bar select {
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: 1px solid #bfc9d9;
+      font-size: 1rem;
+      min-width: 180px;
+      outline: none;
+      background: #f1f5f9;
+    }
+    .attendance-bar button {
+      background: #2563eb;
+      color: white;
+      padding: 10px 22px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      margin: 0 5px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+    .attendance-bar button:hover {
+      background: #1e40af;
+    }
+    .attendance-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #f9fafb;
+      margin-top: 10px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(30,64,175,0.05);
+    }
+    .attendance-table th, .attendance-table td {
+      border: 1px solid #e5e7eb;
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 1.05rem;
+    }
+    .attendance-table th {
+      background: #2563eb;
+      color: white;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+    .attendance-table tr:nth-child(even) {
+      background: #e0e7ff;
+    }
+    .no-data {
+      text-align: center;
+      color: #e74c3c;
+      font-size: 1.1rem;
+      margin: 20px 0;
+    }
+    .charts-area {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+      align-items: flex-start;
+      margin: 30px 0;
+    }
+    .chart-box {
+      background: #f9fafb;
+      border-radius: 15px;
+      box-shadow: 0 2px 10px rgba(30,64,175,0.06);
+      padding: 30px 20px 20px 20px;
+      min-width: 320px;
+      flex: 1 1 350px;
+      text-align: center;
+    }
+    .chart-box h3 {
+      color: #1e40af;
+      margin-bottom: 18px;
+      font-size: 1.1rem;
+    }
+    .btn-download, .btn-print {
+      background: #2563eb;
+      color: white;
+      padding: 10px 22px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      margin: 10px 5px 0 5px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+    .btn-download:hover, .btn-print:hover {
+      background: #1e40af;
+    }
+    footer {
+      background: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 18px 0;
+      margin-top: 40px;
+      border-radius: 0 0 18px 18px;
+      font-size: 1rem;
+    }
+    @media (max-width: 900px) {
+      .charts-area { flex-direction: column; gap: 20px; }
+      .container { padding: 18px 5px; }
+    }
+    @media (max-width: 600px) {
+      nav ul { gap: 8px; }
+      nav ul li a { font-size: 1rem; padding: 10px 8px; }
+      h2 { font-size: 1.1rem; }
+      .chart-box { min-width: 0; }
+      .attendance-bar { flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>تقرير الحضور والغياب</h1>
+  <div style="font-size:1.1rem; margin-top:8px;">تقرير تفاعلي يعرض حضور وغياب الطلاب في منصة كلية الإدارة</div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="index.html">الرئيسية</a></li>
+    <li><a href="STUDENTS.HTML">الطلاب</a></li>
+    <li><a href="analytics.html">التحليلات</a></li>
+    <li><a href="reports.html" class="active">التقارير</a></li>
+    <li><a href="comparison.html">مقارنة التخصصات</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+  <h2>تقارير الحضور والغياب</h2>
+  <div class="attendance-bar">
+    <label for="dateSelect">اختر اليوم:</label>
+    <input type="date" id="dateSelect">
+    <button onclick="markAll('حاضر')">تحديد الكل حاضر</button>
+    <button onclick="markAll('غائب')">تحديد الكل غائب</button>
+    <button class="btn-print" onclick="window.print()">طباعة التقرير</button>
+  </div>
+  <div id="attendanceTableContainer"></div>
+  <div class="charts-area">
+    <div class="chart-box">
+      <h3>نسبة الحضور والغياب</h3>
+      <canvas id="attendancePie"></canvas>
+      <button class="btn-download" onclick="downloadChart('attendancePie', 'attendance_pie.png')">تحميل كصورة</button>
+    </div>
+    <div class="chart-box">
+      <h3>سجل الحضور للطلاب</h3>
+      <canvas id="attendanceBar"></canvas>
+      <button class="btn-download" onclick="downloadChart('attendanceBar', 'attendance_bar.png')">تحميل كصورة</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 منصة كلية الإدارة - جميع الحقوق محفوظة
+</footer>
+
+<script>
+  // جلب الطلاب من LocalStorage
+  function getStudents() {
+    return JSON.parse(localStorage.getItem('studentsData') || '[]');
+  }
+
+  // جلب بيانات الحضور من LocalStorage
+  function getAttendance() {
+    return JSON.parse(localStorage.getItem('attendanceData') || '{}');
+  }
+  function setAttendance(data) {
+    localStorage.setItem('attendanceData', JSON.stringify(data));
+  }
+
+  // تعبئة جدول الحضور
+  function renderAttendanceTable() {
+    const students = getStudents();
+    const date = document.getElementById('dateSelect').value;
+    const attendance = getAttendance();
+    const todayAttendance = attendance[date] || {};
+    const container = document.getElementById('attendanceTableContainer');
+    if (!students.length) {
+      container.innerHTML = `<div class="no-data">لا يوجد طلاب لعرضهم.</div>`;
+      return;
+    }
+    let html = `<table class="attendance-table"><thead>
+      <tr>
+        <th>الاسم</th>
+        <th>التخصص</th>
+        <th>الحالة</th>
+        <th>تغيير</th>
+      </tr>
+    </thead><tbody>`;
+    students.forEach((s, i) => {
+      const status = todayAttendance[s.name] || '';
+      html += `<tr>
+        <td>${s.name}</td>
+        <td>${s.major}</td>
+        <td>
+          <select onchange="updateAttendance('${s.name}', this.value)">
+            <option value="">اختر</option>
+            <option value="حاضر" ${status === 'حاضر' ? 'selected' : ''}>حاضر</option>
+            <option value="غائب" ${status === 'غائب' ? 'selected' : ''}>غائب</option>
+          </select>
+        </td>
+        <td>
+          <button onclick="updateAttendance('${s.name}', 'حاضر')">حاضر</button>
+          <button onclick="updateAttendance('${s.name}', 'غائب')">غائب</button>
+        </td>
+      </tr>`;
+    });
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+    renderAttendanceCharts();
+  }
+
+  // تحديث حالة الحضور لطالب
+  function updateAttendance(name, status) {
+    const date = document.getElementById('dateSelect').value;
+    if (!date) {
+      alert("يرجى اختيار اليوم أولاً.");
+      return;
+    }
+    const attendance = getAttendance();
+    if (!attendance[date]) attendance[date] = {};
+    attendance[date][name] = status;
+    setAttendance(attendance);
+    renderAttendanceTable();
+  }
+
+  // تحديد الكل حاضر أو غائب
+  function markAll(status) {
+    const date = document.getElementById('dateSelect').value;
+    if (!date) {
+      alert("يرجى اختيار اليوم أولاً.");
+      return;
+    }
+    const students = getStudents();
+    const attendance = getAttendance();
+    if (!attendance[date]) attendance[date] = {};
+    students.forEach(s => {
+      attendance[date][s.name] = status;
+    });
+    setAttendance(attendance);
+    renderAttendanceTable();
+  }
+
+  // رسم الرسوم البيانية
+  let pieChart, barChart;
+  function renderAttendanceCharts() {
+    const students = getStudents();
+    const date = document.getElementById('dateSelect').value;
+    const attendance = getAttendance();
+    const todayAttendance = attendance[date] || {};
+    let present = 0, absent = 0;
+    students.forEach(s => {
+      if (todayAttendance[s.name] === 'حاضر') present++;
+      else if (todayAttendance[s.name] === 'غائب') absent++;
+    });
+
+    // Pie Chart
+    const ctxPie = document.getElementById('attendancePie').getContext('2d');
+    if (pieChart) pieChart.destroy();
+    pieChart = new Chart(ctxPie, {
+      type: 'pie',
+      data: {
+        labels: ['حاضر', 'غائب'],
+        datasets: [{
+          data: [present, absent],
+          backgroundColor: ['#2ecc71', '#e74c3c']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: true, position: 'bottom' }
+        }
+      }
+    });
+
+    // Bar Chart (سجل الحضور لكل طالب)
+    // حساب عدد أيام الحضور لكل طالب
+    const allAttendance = getAttendance();
+    const studentNames = students.map(s => s.name);
+    const presentCounts = studentNames.map(name => {
+      let count = 0;
+      for (const d in allAttendance) {
+        if (allAttendance[d][name] === 'حاضر') count++;
+      }
+      return count;
+    });
+    const ctxBar = document.getElementById('attendanceBar').getContext('2d');
+    if (barChart) barChart.destroy();
+    barChart = new Chart(ctxBar, {
+      type: 'bar',
+      data: {
+        labels: studentNames.length ? studentNames : ['لا يوجد بيانات'],
+        datasets: [{
+          label: 'عدد أيام الحضور',
+          data: presentCounts.length ? presentCounts : [0],
+          backgroundColor: '#2563eb'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  }
+
+  // تحميل الرسم كصورة
+  function downloadChart(id, filename) {
+    const canvas = document.getElementById(id);
+    const image = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = image;
+    link.download = filename;
+    link.click();
+  }
+
+  // عند تغيير اليوم
+  document.addEventListener('DOMContentLoaded', function() {
+    // تعيين اليوم الحالي افتراضياً
+    document.getElementById('dateSelect').valueAsDate = new Date();
+    renderAttendanceTable();
+    document.getElementById('dateSelect').onchange = function() {
+      renderAttendanceTable();
+    };
+    // تحديث تلقائي عند العودة للصفحة
+    window.addEventListener('focus', function() {
+      renderAttendanceTable();
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,308 @@
+    <!DOCTYPE html>
+  <html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8">
+    <title>تقرير نسبة النجاح حسب التخصص | منصة كلية الإدارة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body {
+        font-family: 'Cairo', Arial, sans-serif;
+        margin: 0;
+        background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
+        color: #222;
+        min-height: 100vh;
+      }
+      header {
+        background: linear-gradient(90deg, #2563eb 60%, #1e40af 100%);
+        color: white;
+        padding: 35px 0 25px 0;
+        text-align: center;
+        border-radius: 0 0 30px 30px;
+        box-shadow: 0 4px 16px rgba(30,64,175,0.08);
+      }
+      header h1 {
+        font-size: 2.2rem;
+        margin: 0 0 10px 0;
+        letter-spacing: 1px;
+      }
+      nav {
+        background: #e0e7ff;
+        border-bottom: 2px solid #2563eb;
+        padding: 0;
+        margin-bottom: 0;
+      }
+      nav ul {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        margin: 0;
+        padding: 0;
+      }
+      nav ul li {
+        display: inline;
+      }
+      nav ul li a {
+        text-decoration: none;
+        color: #1e40af;
+        font-weight: bold;
+        font-size: 1.15rem;
+        padding: 14px 22px;
+        border-radius: 8px 8px 0 0;
+        transition: background 0.2s, color 0.2s;
+        display: inline-block;
+      }
+      nav ul li a:hover, nav ul li a.active {
+        background: #2563eb;
+        color: #fff;
+      }
+      .container {
+        max-width: 900px;
+        margin: 40px auto 0 auto;
+        background: #fff;
+        padding: 35px 25px;
+        border-radius: 18px;
+        box-shadow: 0 6px 24px rgba(30,64,175,0.07);
+      }
+      h2 {
+        color: #2563eb;
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 1.4rem;
+      }
+      .chart-area {
+        margin: 30px 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        justify-content: center;
+        align-items: flex-start;
+      }
+      .chart-box {
+        background: #f9fafb;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(30,64,175,0.06);
+        padding: 30px 20px 20px 20px;
+        min-width: 320px;
+        flex: 1 1 350px;
+        text-align: center;
+      }
+      .chart-box h3 {
+        color: #1e40af;
+        margin-bottom: 18px;
+        font-size: 1.1rem;
+      }
+      .btn-download, .btn-print {
+        background: #2563eb;
+        color: white;
+        padding: 10px 22px;
+        border-radius: 8px;
+        border: none;
+        font-size: 1rem;
+        margin: 10px 5px 0 5px;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-family: inherit;
+      }
+      .btn-download:hover, .btn-print:hover {
+        background: #1e40af;
+      }
+      .table-area {
+        margin-top: 30px;
+      }
+      .success-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #f9fafb;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(30,64,175,0.05);
+      }
+      .success-table th, .success-table td {
+        border: 1px solid #e5e7eb;
+        padding: 10px 8px;
+        text-align: center;
+        font-size: 1.05rem;
+      }
+      .success-table th {
+        background: #2563eb;
+        color: white;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+      }
+      .success-table tr:nth-child(even) {
+        background: #e0e7ff;
+      }
+      .no-data {
+        text-align: center;
+        color: #e74c3c;
+        font-size: 1.1rem;
+        margin: 20px 0;
+      }
+      footer {
+        background: #2c3e50;
+        color: white;
+        text-align: center;
+        padding: 18px 0;
+        margin-top: 40px;
+        border-radius: 0 0 18px 18px;
+        font-size: 1rem;
+      }
+      @media (max-width: 900px) {
+        .chart-area { flex-direction: column; gap: 20px; }
+        .container { padding: 18px 5px; }
+      }
+      @media (max-width: 600px) {
+        nav ul { gap: 8px; }
+        nav ul li a { font-size: 1rem; padding: 10px 8px; }
+        h2 { font-size: 1.1rem; }
+        .chart-box { min-width: 0; }
+      }
+    </style>
+  </head>
+  <body>
+  
+  <header>
+    <h1>تقرير نسبة النجاح حسب التخصص</h1>
+    <div style="font-size:1.1rem; margin-top:8px;">تحليل تفاعلي لنسب النجاح في كل تخصص</div>
+  </header>
+  
+  <nav>
+    <ul>
+      <li><a href="index.html">الرئيسية</a></li>
+      <li><a href="STUDENTS.HTML">الطلاب</a></li>
+      <li><a href="analytics.html">التحليلات</a></li>
+      <li><a href="reports.html" class="active">التقارير</a></li>
+      <li><a href="comparison.html">مقارنة التخصصات</a></li>
+    </ul>
+  </nav>
+  
+  <div class="container">
+    <h2>نسبة النجاح حسب التخصص</h2>
+    <div class="chart-area">
+      <div class="chart-box">
+        <h3>نسبة النجاح في كل تخصص</h3>
+        <canvas id="successChart"></canvas>
+        <button class="btn-download" onclick="downloadChart('successChart', 'success_by_major.png')">تحميل كصورة</button>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <button class="btn-print" onclick="window.print()">طباعة التقرير</button>
+    </div>
+    <div class="table-area" id="tableArea"></div>
+  </div>
+  
+  <footer>
+    &copy; 2025 منصة كلية الإدارة - جميع الحقوق محفوظة
+  </footer>
+  
+  <script>
+    // جلب الطلاب من LocalStorage
+    function getStudents() {
+      return JSON.parse(localStorage.getItem('studentsData') || '[]');
+    }
+  
+    // حساب نسب النجاح حسب التخصص
+    function getSuccessByMajor() {
+      const students = getStudents();
+      const majors = {};
+      students.forEach(s => {
+        if (!majors[s.major]) majors[s.major] = { total: 0, success: 0 };
+        majors[s.major].total++;
+        if (s.gpa >= 50) majors[s.major].success++;
+      });
+      // حساب النسبة
+      const result = [];
+      for (const m in majors) {
+        const total = majors[m].total;
+        const success = majors[m].success;
+        const percent = total ? ((success / total) * 100).toFixed(2) : 0;
+        result.push({ major: m, total, success, percent });
+      }
+      return result;
+    }
+  
+    // رسم الرسم البياني
+    let successChart;
+    function renderChart() {
+      const data = getSuccessByMajor();
+      const ctx = document.getElementById('successChart').getContext('2d');
+      if (successChart) successChart.destroy();
+      successChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data.map(d => d.major),
+          datasets: [{
+            label: 'نسبة النجاح (%)',
+            data: data.map(d => d.percent),
+            backgroundColor: ['#3498db', '#1abc9c', '#f39c12', '#e74c3c', '#2ecc71', '#9b59b6']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100
+            }
+          }
+        }
+      });
+    }
+  
+    // جدول نسب النجاح
+    function renderTable() {
+      const data = getSuccessByMajor();
+      const area = document.getElementById('tableArea');
+      if (!data.length) {
+        area.innerHTML = `<div class="no-data">لا يوجد بيانات لعرضها.</div>`;
+        return;
+      }
+      let html = `<table class="success-table"><thead>
+        <tr>
+          <th>التخصص</th>
+          <th>عدد الطلاب</th>
+          <th>عدد الناجحين</th>
+          <th>نسبة النجاح</th>
+        </tr>
+      </thead><tbody>`;
+      data.forEach(d => {
+        html += `<tr>
+          <td>${d.major}</td>
+          <td>${d.total}</td>
+          <td>${d.success}</td>
+          <td>${d.percent}%</td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+      area.innerHTML = html;
+    }
+  
+    // تحميل الرسم كصورة
+    function downloadChart(id, filename) {
+      const canvas = document.getElementById(id);
+      const image = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = image;
+      link.download = filename;
+      link.click();
+    }
+  
+    // تحديث تلقائي عند العودة للصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+      renderChart();
+      renderTable();
+      window.addEventListener('focus', function() {
+        renderChart();
+        renderTable();
+      });
+    });
+  </script>
+  
+  </body>
+  </html>

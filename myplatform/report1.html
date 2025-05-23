@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>تقرير المعدلات الفصلية</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
+      min-height: 100vh;
+    }
+    nav {
+      background-color: #2c3e50;
+      padding: 15px 30px;
+      text-align: right;
+      border-radius: 0 0 18px 18px;
+      box-shadow: 0 4px 16px rgba(30,64,175,0.08);
+    }
+    nav a {
+      color: white;
+      margin-left: 25px;
+      text-decoration: none;
+      font-size: 16px;
+      transition: color 0.2s;
+    }
+    nav a:hover {
+      color: #ffd700;
+    }
+    .container {
+      max-width: 950px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 35px 25px 40px 25px;
+      border-radius: 18px;
+      box-shadow: 0 6px 24px rgba(30,64,175,0.07);
+      text-align: center;
+    }
+    h2 {
+      color: #2563eb;
+      margin-bottom: 30px;
+      font-size: 2.1rem;
+      letter-spacing: 1px;
+    }
+    h3 {
+      color: #1e40af;
+      margin-top: 25px;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+    .section-title {
+      color: #2563eb;
+      margin-top: 40px;
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+    }
+    canvas {
+      margin-top: 20px;
+      max-width: 100%;
+      background: #f9fafb;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(30,64,175,0.05);
+      padding: 10px;
+    }
+    .back-btn {
+      margin-top: 30px;
+      display: inline-block;
+      padding: 12px 24px;
+      background: linear-gradient(90deg, #2563eb 60%, #1e40af 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: background 0.3s;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(30,64,175,0.08);
+    }
+    .back-btn:hover {
+      background: #2980b9;
+      color: #ffd700;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      text-align: center;
+      background: #f9fafb;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(30,64,175,0.05);
+    }
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 10px 8px;
+      font-size: 1.08rem;
+    }
+    th {
+      background-color: #2563eb;
+      color: white;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+    tr:nth-child(even) {
+      background: #e0e7ff;
+    }
+    .no-data {
+      color: #e74c3c;
+      font-size: 1.1rem;
+      margin: 20px 0;
+    }
+    .btn-export {
+      background: #16a34a;
+      color: white;
+      padding: 10px 22px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      margin: 18px 5px 0 5px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+      font-weight: bold;
+    }
+    .btn-export:hover {
+      background: #166534;
+    }
+    .highlight {
+      background: #fef08a !important;
+      font-weight: bold;
+      color: #b45309;
+    }
+    @media (max-width: 700px) {
+      .container { padding: 10px 2px; }
+      th, td { font-size: 0.95rem; }
+      h2 { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- شريط تنقل -->
+  <nav>
+    <a href="index.html">الصفحة الرئيسية</a>
+    <a href="reports.html">تقارير الأداء</a>
+    <a href="students.html">الطلاب</a>
+  </nav>
+
+  <!-- محتوى الصفحة -->
+  <div class="container">
+    <h2>تقرير المعدلات الفصلية</h2>
+
+    <!-- جدول المعدلات الفصلية -->
+    <h3>تفاصيل المعدلات الفصلية</h3>
+    <table id="gradesTable">
+      <thead>
+        <tr>
+          <th>الفصل</th>
+          <th>المعدل التراكمي</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- سيتم تعبئته تلقائياً -->
+      </tbody>
+    </table>
+
+    <!-- الرسم البياني -->
+    <canvas id="gradesChart"></canvas>
+
+    <!-- جدول المعدل التراكمي لكل طالب -->
+    <div class="section-title">المعدل التراكمي لكل طالب</div>
+    <table id="studentsTable">
+      <thead>
+        <tr>
+          <th>اسم الطالب</th>
+          <th>التخصص</th>
+          <th>المعدل التراكمي</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- سيتم تعبئته تلقائياً -->
+      </tbody>
+    </table>
+
+    <button class="btn-export" onclick="exportCSV()">تصدير جميع البيانات كـ CSV</button>
+
+    <!-- زر الرجوع -->
+    <a class="back-btn" href="reports.html">الرجوع إلى التقارير</a>
+  </div>
+
+  <!-- سكربت الرسم البياني وتعبئة الجدول -->
+  <script>
+    // جلب بيانات الطلاب من LocalStorage وحساب المعدلات الفصلية
+    function getSemesterAverages() {
+      const students = JSON.parse(localStorage.getItem('studentsData') || '[]');
+      if (!students.length) {
+        return [
+          { name: 'الفصل الأول', avg: 0 },
+          { name: 'الفصل الثاني', avg: 0 },
+          { name: 'الفصل الثالث', avg: 0 }
+        ];
+      }
+      // توزيع الطلاب على الفصول بالتساوي (أو حسب خاصية semester إذا كانت موجودة)
+      const semesters = [
+        { name: 'الفصل الأول', gpas: [] },
+        { name: 'الفصل الثاني', gpas: [] },
+        { name: 'الفصل الثالث', gpas: [] }
+      ];
+      students.forEach((s, i) => {
+        // إذا كان لديك خاصية s.semester استخدمها هنا بدلاً من (i % 3)
+        let gpa = s.gpa || s['المعدل'] || 0;
+        semesters[i % 3].gpas.push(Number(gpa));
+      });
+      return semesters.map(s => ({
+        name: s.name,
+        avg: s.gpas.length ? (s.gpas.reduce((a, b) => a + b, 0) / s.gpas.length).toFixed(2) : 0
+      }));
+    }
+
+    // تعبئة جدول المعدلات الفصلية
+    function renderTable() {
+      const data = getSemesterAverages();
+      const tbody = document.querySelector('#gradesTable tbody');
+      tbody.innerHTML = '';
+      let hasData = false;
+      let maxAvg = Math.max(...data.map(row => parseFloat(row.avg)));
+      data.forEach(row => {
+        tbody.innerHTML += `
+          <tr${parseFloat(row.avg) === maxAvg && maxAvg > 0 ? ' class="highlight"' : ''}>
+            <td>${row.name}</td>
+            <td>${row.avg}</td>
+          </tr>
+        `;
+        if (parseFloat(row.avg) > 0) hasData = true;
+      });
+      if (!hasData) {
+        tbody.innerHTML = `<tr><td colspan="2" class="no-data">لا يوجد بيانات طلاب لعرض المعدلات الفصلية.</td></tr>`;
+      }
+    }
+
+    // رسم الرسم البياني
+    function renderChart() {
+      const data = getSemesterAverages();
+      const ctx = document.getElementById('gradesChart').getContext('2d');
+      if (window.gradesChart) window.gradesChart.destroy();
+      window.gradesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data.map(d => d.name),
+          datasets: [{
+            label: 'المعدل التراكمي',
+            data: data.map(d => d.avg),
+            backgroundColor: ['#3498db', '#2ecc71', '#f39c12']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return 'المعدل: ' + context.parsed.y;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 4
+            }
+          }
+        }
+      });
+    }
+
+    // جدول المعدل التراكمي لكل طالب
+    function renderStudentsTable() {
+      const students = JSON.parse(localStorage.getItem('studentsData') || '[]');
+      const tbody = document.querySelector('#studentsTable tbody');
+      tbody.innerHTML = '';
+      if (!students.length) {
+        tbody.innerHTML = `<tr><td colspan="3" class="no-data">لا يوجد بيانات طلاب.</td></tr>`;
+        return;
+      }
+      // إبراز أعلى معدل تراكمي
+      let maxGpa = Math.max(...students.map(s => Number(s.gpa || s['المعدل'] || 0)));
+      students.forEach(s => {
+        let gpa = s.gpa || s['المعدل'] || '';
+        tbody.innerHTML += `
+          <tr${Number(gpa) === maxGpa && maxGpa > 0 ? ' class="highlight"' : ''}>
+            <td>${s.name || s['اسم الطالب'] || ''}</td>
+            <td>${s.major || s['التخصص'] || ''}</td>
+            <td>${gpa}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // تصدير جميع البيانات كـ CSV مع BOM ودعم الفاصلة المنقوطة
+    function exportCSV() {
+      const students = JSON.parse(localStorage.getItem('studentsData') || '[]');
+      if (!students.length) return alert("لا يوجد بيانات للتصدير!");
+      let csv = "اسم الطالب;التخصص;المعدل التراكمي\n";
+      students.forEach(s => {
+        csv += `"${s.name || s['اسم الطالب'] || ''}";"${s.major || s['التخصص'] || ''}";${s.gpa || s['المعدل'] || ''}\n`;
+      });
+      const blob = new Blob([new Uint8Array([0xEF,0xBB,0xBF]), csv], {type: "text/csv"});
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "students_report.csv";
+      link.click();
+    }
+
+    // تحميل الصفحة: عرض الجدول والرسم البياني وجدول الطلاب
+    window.onload = function() {
+      renderTable();
+      renderChart();
+      renderStudentsTable();
+    };
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>قائمة الطلاب | منصة كلية الإدارة</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+      // مزامنة الطلاب من LocalStorage إلى الجدول (للتفاعل مع الصفحة الرئيسية)
+      document.addEventListener('DOMContentLoaded', function() {
+        // إذا لم تكن الصفحة PHP (أي لا يوجد بيانات من قاعدة البيانات)، استخدم LocalStorage
+        if (!document.getElementById('studentsTableBody')) return;
+        const students = JSON.parse(localStorage.getItem('studentsData') || '[]');
+        const tbody = document.getElementById('studentsTableBody');
+        tbody.innerHTML = '';
+        if (!students.length) {
+          tbody.innerHTML = `<tr><td colspan="5" class="no-data">لا توجد بيانات</td></tr>`;
+        } else {
+          students.forEach((s, i) => {
+            tbody.innerHTML += `
+              <tr>
+                <td>${i + 1}</td>
+                <td>${s.name}</td>
+                <td>${s.major}</td>
+                <td>${s.gpa}</td>
+                <td>
+                  <button class="edit-btn" onclick="editStudent(${i})">تعديل</button>
+                  <button class="delete-btn" onclick="deleteStudent(${i})">حذف</button>
+                </td>
+              </tr>
+            `;
+          });
+        }
+      });
+
+      // تعديل وحذف الطلاب من LocalStorage
+      function editStudent(idx) {
+        const students = JSON.parse(localStorage.getItem('studentsData') || '[]');
+        const s = students[idx];
+        const newName = prompt('تعديل الاسم:', s.name);
+        if (newName === null) return;
+        const newMajor = prompt('تعديل التخصص:', s.major);
+        if (newMajor === null) return;
+        const newGpa = prompt('تعديل المعدل:', s.gpa);
+        if (newGpa === null || isNaN(parseFloat(newGpa))) return;
+        students[idx] = { name: newName, major: newMajor, gpa: parseFloat(newGpa) };
+        localStorage.setItem('studentsData', JSON.stringify(students));
+        location.reload();
+      }
+      function deleteStudent(idx) {
+        if (!confirm('هل أنت متأكد من حذف الطالب؟')) return;
+        const students = JSON.parse(localStorage.getItem('studentsData') || '[]');
+        students.splice(idx, 1);
+        localStorage.setItem('studentsData', JSON.stringify(students));
+        location.reload();
+      }
+    </script>
+    <style>
+      body {
+        font-family: 'Cairo', Arial, sans-serif;
+        margin: 0;
+        background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
+        color: #222;
+        min-height: 100vh;
+      }
+      header {
+        background: linear-gradient(90deg, #2563eb 60%, #1e40af 100%);
+        color: white;
+        padding: 35px 0 25px 0;
+        text-align: center;
+        border-radius: 0 0 30px 30px;
+        box-shadow: 0 4px 16px rgba(30,64,175,0.08);
+      }
+      header h1 {
+        font-size: 2.2rem;
+        margin: 0 0 10px 0;
+        letter-spacing: 1px;
+      }
+      nav {
+        background: #e0e7ff;
+        border-bottom: 2px solid #2563eb;
+        padding: 0;
+        margin-bottom: 0;
+        text-align: center;
+      }
+      nav a {
+        text-decoration: none;
+        color: #1e40af;
+        font-weight: bold;
+        font-size: 1.15rem;
+        padding: 14px 22px;
+        border-radius: 8px 8px 0 0;
+        transition: background 0.2s, color 0.2s;
+        display: inline-block;
+        margin: 0 5px;
+      }
+      nav a:hover, nav a.active {
+        background: #2563eb;
+        color: #fff;
+      }
+      main {
+        max-width: 1000px;
+        margin: 40px auto 0 auto;
+        background: #fff;
+        padding: 35px 25px;
+        border-radius: 18px;
+        box-shadow: 0 6px 24px rgba(30,64,175,0.07);
+      }
+      h2 {
+        color: #2563eb;
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 1.4rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: #f9fafb;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(30,64,175,0.05);
+      }
+      th, td {
+        border: 1px solid #e5e7eb;
+        padding: 10px 8px;
+        text-align: center;
+        font-size: 1.08rem;
+      }
+      th {
+        background-color: #2563eb;
+        color: white;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+      }
+      tr:nth-child(even) {
+        background: #e0e7ff;
+      }
+      .edit-btn, .delete-btn {
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 14px;
+        margin: 0 2px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .edit-btn:hover {
+        background: #1e40af;
+      }
+      .delete-btn {
+        background: #e67e22;
+      }
+      .delete-btn:hover {
+        background: #ba7b16;
+      }
+      .no-data {
+        color: #e74c3c;
+        font-size: 1.1rem;
+        text-align: center;
+      }
+      .btn-export {
+        background: #16a34a;
+        color: white;
+        padding: 10px 22px;
+        border-radius: 8px;
+        border: none;
+        font-size: 1rem;
+        margin: 18px 5px 0 5px;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-family: inherit;
+        font-weight: bold;
+      }
+      .btn-export:hover {
+        background: #166534;
+      }
+      .stat-bar {
+        margin: 30px 0 10px 0;
+        display: flex;
+        justify-content: space-around;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      .stat-box {
+        background-color: #e0e7ff;
+        padding: 18px 14px;
+        border-radius: 12px;
+        min-width: 140px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(30,64,175,0.04);
+      }
+      .stat-box h3 {
+        color: #2980b9;
+        margin-bottom: 8px;
+        font-size: 1.05rem;
+      }
+      @media (max-width: 700px) {
+        main { padding: 10px 2px; }
+        th, td { font-size: 0.95rem; }
+        h2 { font-size: 1.1rem; }
+        .stat-bar { flex-direction: column; gap: 10px; }
+      }
+    </style>
+</head>
+<body>
+  <header>
+    <h1>قائمة الطلاب</h1>
+  </header>
+  <nav>
+      <a href="index.html">الرئيسية</a>
+      <a href="STUDENTS.HTML" class="active">الطلاب</a>
+      <a href="analytics.html">التحليلات</a>
+  </nav>
+  <main>
+    <h2>جميع الطلاب المضافين</h2>
+    <div class="stat-bar" id="statBar"></div>
+    <button class="btn-export" onclick="exportCSV()">تصدير كـ CSV</button>
+    <table>
+      <thead>
+        <tr>
+          <th>الرقم</th>
+          <th>الاسم</th>
+          <th>التخصص</th>
+          <th>المعدل</th>
+          <th>إجراءات</th>
+        </tr>
+      </thead>
+      <tbody id="studentsTableBody">
+        <!-- سيتم تعبئته تلقائياً من LocalStorage -->
+      </tbody>
+    </table>
+  </main>
+  <footer>
+    &copy; 2025 منصة كلية الإدارة
+  </footer>
+  <script>
+    // إحصائيات سريعة أعلى الجدول
+    function renderStats() {
+      const students = JSON.parse(localStorage.getItem('studentsData') || '[]');
+      const count = students.length;
+      const success = students.filter(s => s.gpa >= 50).length;
+      const fail = count - success;
+      const maxGpa = students.length ? Math.max(...students.map(s => s.gpa)) : 0;
+      const minGpa = students.length ? Math.min(...students.map(s => s.gpa)) : 0;
+      const avgGpa = count ? (students.reduce((a, s) => a + Number(s.gpa), 0) / count).toFixed(2) : 0;
+      document.getElementById('statBar').innerHTML = `
+        <div class="stat-box"><h3>عدد الطلاب</h3><p>${count}</p></div>
+        <div class="stat-box"><h3>عدد الناجحين</h3><p>${success}</p></div>
+        <div class="stat-box"><h3>عدد الراسبين</h3><p>${fail}</p></div>
+        <div class="stat-box"><h3>أعلى معدل</h3><p>${maxGpa}</p></div>
+        <div class="stat-box"><h3>أقل معدل</h3><p>${minGpa}</p></div>
+        <div class="stat-box"><h3>متوسط المعدل</h3><p>${avgGpa}</p></div>
+      `;
+    }
+    // تصدير كـ CSV
+    function exportCSV() {
+      const students = JSON.parse(localStorage.getItem('studentsData') || '[]');
+      if (!students.length) return alert("لا يوجد بيانات للتصدير!");
+      let csv = "الرقم;الاسم;التخصص;المعدل\n";
+      students.forEach((s, i) => {
+        csv += `${i+1};"${s.name}";"${s.major}";${s.gpa}\n`;
+      });
+      const blob = new Blob([new Uint8Array([0xEF,0xBB,0xBF]), csv], {type: "text/csv"});
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "students.csv";
+      link.click();
+    }
+    // تحديث تلقائي عند العودة للصفحة
+    window.addEventListener('focus', function() {
+      location.reload();
+    });
+    // عند تحميل الصفحة
+    window.onload = function() {
+      renderStats();
+    };
+  </script>
+</body>
+</html>

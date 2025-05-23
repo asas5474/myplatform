@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>منصة كلية الإدارة | الرئيسية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body {
+        font-family: 'Cairo', Arial, sans-serif;
+        margin: 0;
+        background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
+        color: #222;
+        min-height: 100vh;
+      }
+      header {
+        background: linear-gradient(90deg, #2563eb 60%, #1e40af 100%);
+        color: white;
+        padding: 35px 0 25px 0;
+        text-align: center;
+        border-radius: 0 0 30px 30px;
+        box-shadow: 0 4px 16px rgba(30,64,175,0.08);
+      }
+      header h1 {
+        font-size: 2.5rem;
+        margin: 0 0 10px 0;
+        letter-spacing: 1px;
+      }
+      nav {
+        background: #e0e7ff;
+        border-bottom: 2px solid #2563eb;
+        padding: 0;
+        margin-bottom: 0;
+      }
+      nav ul {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        margin: 0;
+        padding: 0;
+      }
+      nav ul li {
+        display: inline;
+      }
+      nav ul li a {
+        text-decoration: none;
+        color: #1e40af;
+        font-weight: bold;
+        font-size: 1.15rem;
+        padding: 14px 22px;
+        border-radius: 8px 8px 0 0;
+        transition: background 0.2s, color 0.2s;
+        display: inline-block;
+      }
+      nav ul li a:hover, nav ul li a.active {
+        background: #2563eb;
+        color: #fff;
+      }
+      .hero {
+        background: linear-gradient(to right, #3498db, #2ecc71);
+        color: white;
+        padding: 60px 20px 40px 20px;
+        text-align: center;
+        border-radius: 18px;
+        margin: 30px auto 0 auto;
+        max-width: 1100px;
+        box-shadow: 0 2px 10px rgba(30,64,175,0.08);
+      }
+      .hero h2 {
+        font-size: 2.2rem;
+        margin-bottom: 12px;
+      }
+      .section {
+        max-width: 1100px;
+        margin: 35px auto 0 auto;
+        background: white;
+        padding: 35px 25px;
+        border-radius: 16px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        margin-bottom: 30px;
+      }
+      .section h2 {
+        color: #2563eb;
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 1.5rem;
+      }
+      .add-student-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+        margin-bottom: 25px;
+      }
+      .add-student-form input, .add-student-form select {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #bfc9d9;
+        font-size: 1rem;
+        min-width: 160px;
+        outline: none;
+        transition: border 0.2s;
+      }
+      .add-student-form input:focus {
+        border: 1.5px solid #2563eb;
+      }
+      .add-student-form button {
+        background: linear-gradient(90deg, #2563eb 60%, #1e40af 100%);
+        color: white;
+        padding: 12px 28px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-family: inherit;
+        font-weight: bold;
+        margin: 0 5px;
+        transition: background 0.2s;
+      }
+      .add-student-form button:hover {
+        background: #1e40af;
+      }
+      .students-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #f9fafb;
+        margin-top: 10px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(30,64,175,0.05);
+      }
+      .students-table th, .students-table td {
+        border: 1px solid #e5e7eb;
+        padding: 10px 8px;
+        text-align: center;
+        font-size: 1.05rem;
+      }
+      .students-table th {
+        background: #2563eb;
+        color: white;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+      }
+      .students-table tr:nth-child(even) {
+        background: #e0e7ff;
+      }
+      .edit-btn, .save-btn, .cancel-btn, .delete-btn {
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 14px;
+        margin: 0 2px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .edit-btn:hover, .save-btn:hover {
+        background: #1e40af;
+      }
+      .cancel-btn {
+        background: #e74c3c;
+      }
+      .cancel-btn:hover {
+        background: #c0392b;
+      }
+      .delete-btn {
+        background: #e67e22;
+      }
+      .delete-btn:hover {
+        background: #ba7b16;
+      }
+      .stats {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-top: 20px;
+      }
+      .stat-box {
+        background-color: #e0e7ff;
+        padding: 22px 18px;
+        border-radius: 12px;
+        flex: 1 1 200px;
+        text-align: center;
+        min-width: 180px;
+        box-shadow: 0 2px 8px rgba(30,64,175,0.04);
+      }
+      .stat-box h3 {
+        color: #2980b9;
+        margin-bottom: 10px;
+        font-size: 1.15rem;
+      }
+      canvas {
+        max-width: 100%;
+        margin: auto;
+        display: block;
+      }
+      footer {
+        background: #2c3e50;
+        color: white;
+        text-align: center;
+        padding: 18px 0;
+        margin-top: 40px;
+        border-radius: 0 0 18px 18px;
+        font-size: 1rem;
+      }
+      @media (max-width: 800px) {
+        .stats { flex-direction: column; gap: 10px; }
+        .section, .hero { padding: 18px 5px; }
+      }
+      @media (max-width: 600px) {
+        nav ul { gap: 8px; }
+        nav ul li a { font-size: 1rem; padding: 10px 8px; }
+        .hero h2 { font-size: 1.3rem; }
+        .section h2 { font-size: 1.1rem; }
+        .add-student-form input { min-width: 100px; }
+      }
+    </style>
+</head>
+<body>
+
+<header>
+  <h1>منصة كلية الإدارة</h1>
+  <div style="font-size:1.2rem; margin-top:8px;">مرحباً بكم في بوابة التحليل الأكاديمي والإحصائي</div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="index.html" class="active">الرئيسية</a></li>
+    <li><a href="STUDENTS.HTML">الطلاب</a></li>
+    <li><a href="analytics.html">التحليلات</a></li>
+    <li><a href="reports.html">التقارير</a></li>
+    <li><a href="comparison.html">مقارنة التخصصات</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <h2>تحليل الأداء الأكاديمي</h2>
+  <p>استعرض أداء الطلاب، قارن بين التخصصات، واطلع على تقارير النجاح والتفوق في كلية الإدارة.</p>
+</section>
+
+<section class="section">
+  <h2>إضافة طالب جديد</h2>
+  <form class="add-student-form" id="addStudentForm">
+    <input type="text" id="studentName" placeholder="اسم الطالب" required>
+    <input type="text" id="studentMajor" placeholder="التخصص" required>
+    <input type="number" step="0.01" id="studentGPA" placeholder="المعدل" required>
+    <button type="submit">إضافة</button>
+  </form>
+  <table class="students-table" id="studentsTable">
+    <thead>
+      <tr>
+        <th>اسم الطالب</th>
+        <th>التخصص</th>
+        <th>المعدل</th>
+        <th>تعديل</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<section class="section">
+  <h2>الإحصائيات العامة</h2>
+  <div class="stats" id="statsSection">
+    <!-- سيتم تعبئتها تلقائياً -->
+  </div>
+</section>
+
+<section class="section">
+  <h2>معدلات الطلاب حسب التخصص</h2>
+  <canvas id="departmentChart"></canvas>
+</section>
+
+<section class="section">
+  <h2>نسبة النجاح والرسوب</h2>
+  <canvas id="passFailChart"></canvas>
+</section>
+
+<section class="section" style="text-align:center;">
+  <h2>تقرير المعدلات الفصلية</h2>
+  <a href="report1.html" class="btn-more">عرض تقرير المعدلات الفصلية</a>
+</section>
+
+<footer>
+  &copy; 2025 منصة كلية الإدارة - جميع الحقوق محفوظة
+</footer>
+
+<script>
+  function getStudents() {
+    return JSON.parse(localStorage.getItem('studentsData') || '[]');
+  }
+  function setStudents(data) {
+    localStorage.setItem('studentsData', JSON.stringify(data));
+  }
+
+  document.getElementById('addStudentForm').onsubmit = function(e) {
+    e.preventDefault();
+    const name = document.getElementById('studentName').value.trim();
+    const major = document.getElementById('studentMajor').value.trim();
+    const gpa = parseFloat(document.getElementById('studentGPA').value);
+    if (!name || !major || isNaN(gpa)) return;
+    const students = getStudents();
+    students.push({ name, major, gpa });
+    setStudents(students);
+    this.reset();
+    renderStudents();
+    renderStats();
+    renderCharts();
+  };
+
+  function renderStudents() {
+    const students = getStudents();
+    const tbody = document.querySelector('#studentsTable tbody');
+    tbody.innerHTML = '';
+    students.forEach((s, i) => {
+      if (s.editing) {
+        tbody.innerHTML += `
+          <tr>
+            <td><input type="text" id="editName${i}" value="${s.name}" style="min-width:90px"></td>
+            <td><input type="text" id="editMajor${i}" value="${s.major}" style="min-width:90px"></td>
+            <td><input type="number" step="0.01" id="editGpa${i}" value="${s.gpa}" style="min-width:70px"></td>
+            <td>
+              <button class="save-btn" onclick="saveEdit(${i})">حفظ</button>
+              <button class="cancel-btn" onclick="cancelEdit(${i})">إلغاء</button>
+            </td>
+          </tr>
+        `;
+      } else {
+        tbody.innerHTML += `
+          <tr>
+            <td>${s.name}</td>
+            <td>${s.major}</td>
+            <td>${s.gpa}</td>
+            <td>
+              <button class="edit-btn" onclick="editStudent(${i})">تعديل</button>
+              <button class="delete-btn" onclick="deleteStudent(${i})">حذف</button>
+            </td>
+          </tr>
+        `;
+      }
+    });
+  }
+
+  function editStudent(idx) {
+    const students = getStudents();
+    students.forEach((s, i) => s.editing = (i === idx));
+    setStudents(students);
+    renderStudents();
+  }
+
+  function saveEdit(idx) {
+    const students = getStudents();
+    const name = document.getElementById('editName'+idx).value.trim();
+    const major = document.getElementById('editMajor'+idx).value.trim();
+    const gpa = parseFloat(document.getElementById('editGpa'+idx).value);
+    if (!name || !major || isNaN(gpa)) return;
+    students[idx] = { name, major, gpa };
+    students.forEach(s => delete s.editing);
+    setStudents(students);
+    renderStudents();
+    renderStats();
+    renderCharts();
+  }
+
+  function cancelEdit(idx) {
+    const students = getStudents();
+    students.forEach(s => delete s.editing);
+    setStudents(students);
+    renderStudents();
+  }
+
+  function deleteStudent(idx) {
+    let students = getStudents();
+    students.splice(idx, 1);
+    setStudents(students);
+    renderStudents();
+    renderStats();
+    renderCharts();
+  }
+
+  function renderStats() {
+    const students = getStudents();
+    const count = students.length;
+    // النجاح >= 50، الرسوب < 50
+    const success = students.filter(s => s.gpa >= 50).length;
+    const fail = count - success;
+    const maxGpa = students.length ? Math.max(...students.map(s => s.gpa)) : 0;
+    const minGpa = students.length ? Math.min(...students.map(s => s.gpa)) : 0;
+    const avgSuccess = count ? Math.round((success / count) * 100) : 0;
+    document.getElementById('statsSection').innerHTML = `
+      <div class="stat-box"><h3>عدد الطلاب</h3><p>${count}</p></div>
+      <div class="stat-box"><h3>معدل النجاح</h3><p>${avgSuccess}%</p></div>
+      <div class="stat-box"><h3>أعلى معدل</h3><p>${maxGpa}</p></div>
+      <div class="stat-box"><h3>أقل معدل</h3><p>${minGpa}</p></div>
+    `;
+  }
+
+  let departmentChart, passFailChart;
+  function renderCharts() {
+    const students = getStudents();
+    // رسم متوسط المعدلات حسب التخصص
+    const majors = {};
+    students.forEach(s => {
+      if (!majors[s.major]) majors[s.major] = [];
+      majors[s.major].push(s.gpa);
+    });
+    const labels = Object.keys(majors);
+    const data = labels.map(m => majors[m].reduce((a,b)=>a+b,0)/majors[m].length);
+
+    const ctx1 = document.getElementById('departmentChart').getContext('2d');
+    if (departmentChart) departmentChart.destroy();
+    departmentChart = new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: labels.length ? labels : ['لا يوجد بيانات'],
+        datasets: [{
+          label: 'متوسط المعدل',
+          data: data.length ? data : [0],
+          backgroundColor: ['#3498db', '#1abc9c', '#9b59b6', '#f1c40f', '#e67e22', '#e74c3c']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100
+          }
+        }
+      }
+    });
+
+    // النجاح >= 50، الرسوب < 50
+    const count = students.length;
+    const success = students.filter(s => s.gpa >= 50).length;
+    const fail = count - success;
+    const ctx2 = document.getElementById('passFailChart').getContext('2d');
+    if (passFailChart) passFailChart.destroy();
+    passFailChart = new Chart(ctx2, {
+      type: 'pie',
+      data: {
+        labels: ['ناجح', 'راسب'],
+        datasets: [{
+          data: count ? [success, fail] : [0, 0],
+          backgroundColor: ['#2ecc71', '#e74c3c']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: true, position: 'bottom' }
+        }
+      }
+    });
+  }
+
+  // ميزة إضافية: زر حذف جميع الطلاب
+  function deleteAllStudents() {
+    if (confirm('هل أنت متأكد من حذف جميع بيانات الطلاب؟')) {
+      setStudents([]);
+      renderStudents();
+      renderStats();
+      renderCharts();
+    }
+  }
+
+  // إضافة زر حذف الكل أسفل جدول الطلاب
+  window.onload = function() {
+    renderStudents();
+    renderStats();
+    renderCharts();
+    // إضافة زر حذف الكل إذا لم يكن موجوداً
+    if (!document.getElementById('deleteAllBtn')) {
+      const btn = document.createElement('button');
+      btn.textContent = 'حذف جميع الطلاب';
+      btn.className = 'delete-btn';
+      btn.id = 'deleteAllBtn';
+      btn.style.margin = '18px auto 0 auto';
+      btn.onclick = deleteAllStudents;
+      document.querySelector('.section .students-table').parentElement.appendChild(btn);
+    }
+  };
+</script>
+
+</body>
+</html>
