@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>قائمة الطلاب | منصة كلية الإدارة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Cairo', Arial, sans-serif;
+        margin: 0;
+        background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
+        color: #222;
+        min-height: 100vh;
+      }
+      header {
+        background: linear-gradient(90deg, #2563eb 60%, #1e40af 100%);
+        color: white;
+        padding: 35px 0 25px 0;
+        text-align: center;
+        border-radius: 0 0 30px 30px;
+        box-shadow: 0 4px 16px rgba(30,64,175,0.08);
+      }
+      header h1 {
+        font-size: 2.2rem;
+        margin: 0 0 10px 0;
+        letter-spacing: 1px;
+      }
+      nav {
+        background: #e0e7ff;
+        border-bottom: 2px solid #2563eb;
+        padding: 0;
+        margin-bottom: 0;
+        text-align: center;
+      }
+      nav a {
+        text-decoration: none;
+        color: #1e40af;
+        font-weight: bold;
+        font-size: 1.15rem;
+        padding: 14px 22px;
+        border-radius: 8px 8px 0 0;
+        transition: background 0.2s, color 0.2s;
+        display: inline-block;
+        margin: 0 5px;
+      }
+      nav a:hover, nav a.active {
+        background: #2563eb;
+        color: #fff;
+      }
+      main {
+        max-width: 1000px;
+        margin: 40px auto 0 auto;
+        background: #fff;
+        padding: 35px 25px;
+        border-radius: 18px;
+        box-shadow: 0 6px 24px rgba(30,64,175,0.07);
+      }
+      h2 {
+        color: #2563eb;
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 1.4rem;
+      }
+      .search-bar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 25px;
+        margin-top: 10px;
+        position: relative;
+      }
+      .search-bar input[type="text"] {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1.5px solid #bfc9d9;
+        font-size: 1.08rem;
+        min-width: 220px;
+        outline: none;
+        transition: border 0.2s;
+        text-align: center;
+        background: #f9fafb;
+      }
+      .search-bar input[type="text"]:focus {
+        border: 1.5px solid #2563eb;
+        background: #fff;
+      }
+      .search-bar button {
+        background: linear-gradient(90deg, #2563eb 60%, #1e40af 100%);
+        color: white;
+        padding: 10px 28px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.08rem;
+        font-family: inherit;
+        font-weight: bold;
+        transition: background 0.2s;
+      }
+      .search-bar button:hover {
+        background: #1e40af;
+      }
+      .search-suggestions {
+        position: absolute;
+        top: 48px;
+        right: 0;
+        left: 0;
+        background: #fff;
+        border: 1px solid #bfc9d9;
+        border-radius: 0 0 10px 10px;
+        z-index: 10;
+        max-height: 180px;
+        overflow-y: auto;
+        box-shadow: 0 4px 16px rgba(30,64,175,0.08);
+        display: none;
+      }
+      .search-suggestions li {
+        padding: 10px 18px;
+        cursor: pointer;
+        font-size: 1.05rem;
+        color: #1e40af;
+        transition: background 0.15s;
+        text-align: right;
+      }
+      .search-suggestions li:hover, .search-suggestions li.active {
+        background: #e0e7ff;
+        color: #2563eb;
+      }
+      .search-result {
+        text-align: center;
+        margin-bottom: 18px;
+        font-size: 1.15rem;
+        color: #2563eb;
+        font-weight: bold;
+        background: #e0e7ff;
+        border-radius: 10px;
+        padding: 10px 0;
+        display: none;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: #f9fafb;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(30,64,175,0.05);
+      }
+      th, td {
+        border: 1px solid #e5e7eb;
+        padding: 10px 8px;
+        text-align: center;
+        font-size: 1.08rem;
+      }
+      th {
+        background-color: #2563eb;
+        color: white;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+      }
+      tr:nth-child(even) {
+        background: #e0e7ff;
+      }
+      .highlight {
+        background: #fef08a !important;
+        color: #b45309 !important;
+        font-weight: bold;
+      }
+      .edit-btn, .delete-btn, .semesters-btn {
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 14px;
+        margin: 0 2px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .edit-btn:hover, .semesters-btn:hover {
+        background: #1e40af;
+      }
+      .delete-btn {
+        background: #e67e22;
+      }
+      .delete-btn:hover {
+        background: #ba7b16;
+      }
+      .semesters-btn {
+        background: #16a34a;
+        font-size: 1.1em;
+        padding: 6px 10px;
+      }
+      .no-data {
+        color: #e74c3c;
+        font-size: 1.1rem;
+        text-align: center;
+      }
+      .btn-export {
+        background: #16a34a;
+        color: white;
+        padding: 10px 22px;
+        border-radius: 8px;
+        border: none;
+        font-size: 1rem;
+        margin: 18px 5px 0 5px;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-family: inherit;
+        font-weight: bold;
+      }
+      .btn-export:hover {
+        background: #166534;
+      }
+      .stat-bar {
+        margin: 30px 0 10px 0;
+        display: flex;
+        justify-content: center;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+      .stat-box {
+        background-color: #e0e7ff;
+        padding: 18px 14px;
+        border-radius: 12px;
+        min-width: 140px;
+        max-width: 200px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(30,64,175,0.04);
+        margin-bottom: 10px;
+      }
+      .stat-box h3 {
+        color: #2980b9;
+        margin-bottom: 8px;
+        font-size: 1.05rem;
+      }
+      /* نافذة الفصول */
+      #semestersModal {
+        position: fixed;
+        inset: 0;
+        background: rgba(30,64,175,0.85);
+        z-index: 10010;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+      .semesters-box {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 6px 24px rgba(30,64,175,0.18);
+        padding: 35px 25px 25px 25px;
+        text-align: center;
+        min-width: 320px;
+        max-width: 95vw;
+        position: relative;
+      }
+      .semesters-box h3 {
+        color: #2563eb;
+        margin-bottom: 18px;
+        font-size: 1.2rem;
+      }
+      .semesters-list {
+        margin-bottom: 18px;
+      }
+      .semesters-list input[type="number"] {
+        width: 80px;
+        padding: 7px;
+        border-radius: 7px;
+        border: 1px solid #bfc9d9;
+        margin: 0 6px;
+        font-size: 1rem;
+        text-align: center;
+      }
+      .semesters-list label {
+        margin-left: 8px;
+        font-weight: bold;
+        color: #1e40af;
+      }
+      .semesters-box .save-btn {
+        background: #2563eb;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 26px;
+        font-size: 1.1rem;
+        margin: 0 5px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .semesters-box .save-btn:hover {
+        background: #1e40af;
+      }
+      .semesters-box .close-btn {
+        background: #e74c3c;
+        color: #fff;
+        border-radius: 8px;
+        padding: 7px 18px;
+        font-size: 1rem;
+        margin-top: 10px;
+        border: none;
+        cursor: pointer;
+      }
+      .semesters-box .close-btn:hover {
+        background: #c0392b;
+      }
+      .semesters-box .final-gpa {
+        margin-top: 15px;
+        font-size: 1.1rem;
+        color: #16a34a;
+        font-weight: bold;
+      }
+      @media (max-width: 700px) {
+        main { padding: 10px 2px; }
+        th, td { font-size: 0.95rem; }
+        h2 { font-size: 1.1rem; }
+        .stat-bar { flex-direction: column; gap: 10px; }
+        .semesters-box { min-width: 90vw; }
+        .search-bar input[type="text"] { min-width: 120px; }
+      }
+    </style>
+</head>
+<body>
+  <header>
+    <h1>قائمة الطلاب</h1>
+  </header>
+  <nav>
+      <a href="index.html">الرئيسية</a>
+      <a href="students.html" class="active">الطلاب</a>
+      <a href="analytics.html">التحليلات</a>
+      <a href="reports.html">التقارير</a>
+      <a href="comparison.html">مقارنة التخصصات</a>
+  </nav>
+  <main>
+    <h2>جميع الطلاب المضافين</h2>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="ابحث عن اسم الطالب..." autocomplete="off" oninput="showSuggestions()">
+      <button onclick="searchStudent()">بحث</button>
+      <ul class="search-suggestions" id="searchSuggestions"></ul>
+    </div>
+    <div class="search-result" id="searchResult"></div>
+    <div class="stat-bar" id="statBar"></div>
+    <button class="btn-export" onclick="exportCSV()">تصدير كـ CSV</button>
+    <table>
+      <thead>
+        <tr>
+          <th>الرقم</th>
+          <th>الاسم</th>
+          <th>التخصص</th>
+          <th>المعدل النهائي</th>
+          <th>الفصول</th>
+          <th>إجراءات</th>
+        </tr>
+      </thead>
+      <tbody id="studentsTableBody">
+        <!-- سيتم تعبئته تلقائياً من LocalStorage -->
+      </tbody>
+    </table>
+  </main>
+
+  <!-- نافذة الفصول -->
+  <div id="semestersModal">
+    <div class="semesters-box">
+      <h3>معدلات الفصول للطالب: <span id="modalStudentName"></span></h3>
+      <form id="semestersForm">
+        <div class="semesters-list" id="semestersInputs"></div>
+        <div class="final-gpa" id="finalGpaText"></div>
+        <button type="submit" class="save-btn">حفظ</button>
+        <button type="button" class="close-btn" onclick="closeSemestersModal()">إغلاق</button>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 منصة كلية الإدارة
+  </footer>
+  <script>
+    // --- بيانات الطلاب مع دعم الفصول ---
+    function getStudents() {
+      return JSON.parse(localStorage.getItem('studentsData') || '[]');
+    }
+    function setStudents(data) {
+      localStorage.setItem('studentsData', JSON.stringify(data));
+    }
+
+    // عرض الجدول مع زر الفصول
+    function renderTable(highlightName = null) {
+      const students = getStudents();
+      const tbody = document.getElementById('studentsTableBody');
+      tbody.innerHTML = '';
+      if (!students.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="no-data">لا توجد بيانات</td></tr>`;
+      } else {
+        students.forEach((s, i) => {
+          const highlight = highlightName && s.name === highlightName ? 'highlight' : '';
+          tbody.innerHTML += `
+            <tr class="${highlight}">
+              <td>${i + 1}</td>
+              <td>${s.name}</td>
+              <td>${s.major}</td>
+              <td>${s.gpa}</td>
+              <td>
+                <button class="semesters-btn" title="عرض/تعديل الفصول" onclick="showSemestersModalByName('${s.name.replace(/'/g,"\\'")}')">📚</button>
+              </td>
+              <td>
+                <button class="edit-btn" onclick="editStudentByName('${s.name.replace(/'/g,"\\'")}')">تعديل</button>
+                <button class="delete-btn" onclick="deleteStudentByName('${s.name.replace(/'/g,"\\'")}')">حذف</button>
+              </td>
+            </tr>
+          `;
+        });
+      }
+    }
+
+    // بحث عن طالب بالاسم مع تقريب (بحث جزئي وليس مطابق فقط)
+    function searchStudent() {
+      const val = document.getElementById('searchInput').value.trim();
+      const students = getStudents();
+      const resultDiv = document.getElementById('searchResult');
+      if (!val) {
+        resultDiv.style.display = "none";
+        renderTable();
+        return;
+      }
+      // بحث تقريبي (جزئي)
+      const matches = students.filter(s => s.name.includes(val));
+      if (!matches.length) {
+        resultDiv.textContent = "الطالب غير موجود!";
+        resultDiv.style.display = "block";
+        renderTable();
+      } else {
+        resultDiv.textContent = `تم العثور على ${matches.length} طالب/ة مطابق: "${matches.map(s=>s.name).join('", "')}"`;
+        resultDiv.style.display = "block";
+        renderTable(matches[0].name); // يميز أول نتيجة
+        scrollToRow(matches[0].name);
+      }
+    }
+
+    // اقتراحات البحث التلقائي
+    function showSuggestions() {
+      const val = document.getElementById('searchInput').value.trim();
+      const students = getStudents();
+      const suggestions = document.getElementById('searchSuggestions');
+      if (!val) {
+        suggestions.style.display = "none";
+        suggestions.innerHTML = "";
+        return;
+      }
+      // بحث تقريبي (يحتوي على النص)
+      const filtered = students.filter(s => s.name.includes(val));
+      if (!filtered.length) {
+        suggestions.style.display = "none";
+        suggestions.innerHTML = "";
+        return;
+      }
+      suggestions.innerHTML = filtered.map((s, idx) =>
+        `<li onclick="selectSuggestion('${s.name.replace(/'/g,"\\'")}')">${s.name}</li>`
+      ).join('');
+      suggestions.style.display = "block";
+    }
+    function selectSuggestion(name) {
+      document.getElementById('searchInput').value = name;
+      document.getElementById('searchSuggestions').style.display = "none";
+      searchStudent();
+    }
+    // إخفاء الاقتراحات عند فقدان التركيز
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.search-bar')) {
+        document.getElementById('searchSuggestions').style.display = "none";
+      }
+    });
+
+    // تمرير للصف عند البحث
+    function scrollToRow(name) {
+      setTimeout(() => {
+        const rows = document.querySelectorAll('#studentsTableBody tr');
+        for (let row of rows) {
+          if (row.classList.contains('highlight')) {
+            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            break;
+          }
+        }
+      }, 200);
+    }
+
+    // نافذة الفصول
+    let currentStudentIdx = null;
+    function showSemestersModal(idx) {
+      currentStudentIdx = idx;
+      const students = getStudents();
+      const s = students[idx];
+      document.getElementById('modalStudentName').textContent = s.name;
+      let semesters = s.semesters || Array(8).fill('');
+      if (semesters.length < 8) semesters = semesters.concat(Array(8 - semesters.length).fill(''));
+      let html = '';
+      for (let i = 0; i < semesters.length; i++) {
+        html += `<label>فصل ${i+1}:</label>
+          <input type="number" step="0.01" min="0" max="100" value="${semesters[i] !== '' ? semesters[i] : ''}" id="sem${i}" />
+          <br>`;
+      }
+      document.getElementById('semestersInputs').innerHTML = html;
+      updateFinalGpaText();
+      document.getElementById('semestersModal').style.display = 'flex';
+    }
+    // البحث بالاسم للفصول
+    function showSemestersModalByName(name) {
+      const students = getStudents();
+      const idx = students.findIndex(s => s.name === name);
+      if (idx !== -1) showSemestersModal(idx);
+    }
+    function closeSemestersModal() {
+      document.getElementById('semestersModal').style.display = 'none';
+      currentStudentIdx = null;
+    }
+    document.addEventListener('input', function(e) {
+      if (e.target && e.target.id.startsWith('sem')) {
+        updateFinalGpaText();
+      }
+    });
+    function updateFinalGpaText() {
+      let sum = 0, count = 0;
+      for (let i = 0; i < 8; i++) {
+        const val = parseFloat(document.getElementById('sem'+i)?.value);
+        if (!isNaN(val)) {
+          sum += val;
+          count++;
+        }
+      }
+      const avg = count ? (sum / count).toFixed(2) : '';
+      document.getElementById('finalGpaText').textContent = avg ? `المعدل النهائي المقترح: ${avg}` : '';
+    }
+    document.getElementById('semestersForm').onsubmit = function(e) {
+      e.preventDefault();
+      const students = getStudents();
+      const semesters = [];
+      let sum = 0, count = 0;
+      for (let i = 0; i < 8; i++) {
+        const val = parseFloat(document.getElementById('sem'+i).value);
+        if (!isNaN(val)) {
+          semesters.push(val);
+          sum += val;
+          count++;
+        } else {
+          semesters.push('');
+        }
+      }
+      const avg = count ? (sum / count).toFixed(2) : '';
+      students[currentStudentIdx].semesters = semesters;
+      if (avg) students[currentStudentIdx].gpa = parseFloat(avg);
+      setStudents(students);
+      renderTable();
+      renderStats();
+      closeSemestersModal();
+    };
+
+    // تعديل وحذف الطلاب بالاسم
+    function editStudentByName(name) {
+      const students = getStudents();
+      const idx = students.findIndex(s => s.name === name);
+      if (idx === -1) return;
+      const s = students[idx];
+      const newName = prompt('تعديل الاسم:', s.name);
+      if (newName === null) return;
+      const newMajor = prompt('تعديل التخصص:', s.major);
+      if (newMajor === null) return;
+      const newGpa = prompt('تعديل المعدل النهائي:', s.gpa);
+      if (newGpa === null || isNaN(parseFloat(newGpa))) return;
+      students[idx] = { ...s, name: newName, major: newMajor, gpa: parseFloat(newGpa) };
+      setStudents(students);
+      renderTable();
+      renderStats();
+    }
+    function deleteStudentByName(name) {
+      if (!confirm('هل أنت متأكد من حذف الطالب؟')) return;
+      const students = getStudents();
+      const idx = students.findIndex(s => s.name === name);
+      if (idx === -1) return;
+      students.splice(idx, 1);
+      setStudents(students);
+      renderTable();
+      renderStats();
+    }
+
+    // إحصائيات سريعة أعلى الجدول
+    function renderStats() {
+      const students = getStudents();
+      const count = students.length;
+      const success = students.filter(s => s.gpa >= 50).length;
+      const fail = count - success;
+      const maxGpa = students.length ? Math.max(...students.map(s => s.gpa)) : 0;
+      const minGpa = students.length ? Math.min(...students.map(s => s.gpa)) : 0;
+      const avgGpa = count ? (students.reduce((a, s) => a + Number(s.gpa), 0) / count).toFixed(2) : 0;
+      document.getElementById('statBar').innerHTML = `
+        <div class="stat-box"><h3>عدد الطلاب</h3><p>${count}</p></div>
+        <div class="stat-box"><h3>عدد الناجحين</h3><p>${success}</p></div>
+        <div class="stat-box"><h3>عدد الراسبين</h3><p>${fail}</p></div>
+        <div class="stat-box"><h3>أعلى معدل</h3><p>${maxGpa}</p></div>
+        <div class="stat-box"><h3>أقل معدل</h3><p>${minGpa}</p></div>
+        <div class="stat-box"><h3>متوسط المعدل</h3><p>${avgGpa}</p></div>
+      `;
+    }
+    // تصدير كـ CSV
+    function exportCSV() {
+      const students = getStudents();
+      if (!students.length) return alert("لا يوجد بيانات للتصدير!");
+      let csv = "الرقم;الاسم;التخصص;المعدل النهائي;الفصول\n";
+      students.forEach((s, i) => {
+        let sems = (s.semesters || []).map((v, idx) => `فصل${idx+1}:${v}`).join('|');
+        csv += `${i+1};"${s.name}";"${s.major}";${s.gpa};"${sems}"\n`;
+      });
+      const blob = new Blob([new Uint8Array([0xEF,0xBB,0xBF]), csv], {type: "text/csv"});
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "students.csv";
+      link.click();
+    }
+    // تحديث تلقائي عند العودة للصفحة
+    window.addEventListener('focus', function() {
+      renderTable();
+      renderStats();
+    });
+    // عند تحميل الصفحة
+    window.onload = function() {
+      renderTable();
+      renderStats();
+    };
+    // البحث عند الضغط على Enter
+    document.getElementById('searchInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') searchStudent();
+    });
+  </script>
+</body>
+</html>

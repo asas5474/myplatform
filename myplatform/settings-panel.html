@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>إعدادات المنصة</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Cairo', Arial, sans-serif;
+      background: #e0e7ff;
+      color: #222;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.4s, color 0.4s;
+    }
+    body.dark {
+      background: #181f2a;
+      color: #f3f4f6;
+    }
+    .settings-box {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 6px 24px #2563eb33;
+      padding: 38px 32px 28px 32px;
+      min-width: 340px;
+      max-width: 95vw;
+      text-align: center;
+      position: relative;
+      transition: background 0.4s, color 0.4s;
+    }
+    body.dark .settings-box {
+      background: #232b3b;
+      color: #f3f4f6;
+    }
+    .settings-box h2 {
+      color: #2563eb;
+      margin-bottom: 18px;
+      font-size: 1.45rem;
+      letter-spacing: 1px;
+    }
+    body.dark .settings-box h2 {
+      color: #fbbf24;
+    }
+    .setting-row {
+      margin: 22px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 1.08rem;
+    }
+    .settings-box button {
+      background: linear-gradient(90deg, #2563eb 60%, #1e40af 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 22px;
+      font-size: 1.08rem;
+      font-family: inherit;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-right: 8px;
+    }
+    .settings-box button:hover {
+      background: #1e40af;
+    }
+    .settings-box .theme-btn {
+      background: linear-gradient(90deg, #fbbf24 60%, #f59e42 100%);
+      color: #fff;
+      margin-right: 0;
+      margin-left: 8px;
+    }
+    .settings-box .theme-btn.night {
+      background: linear-gradient(90deg, #2563eb 60%, #1e40af 100%);
+      color: #fff;
+    }
+    .dev-label {
+      font-weight: bold;
+      color: #fff;
+      background: linear-gradient(90deg, #2563eb 60%, #1e40af 100%);
+      border-radius: 10px;
+      padding: 7px 18px;
+      font-size: 1.08rem;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 8px #2563eb22;
+      font-family: 'Cairo', Arial, sans-serif;
+      transition: background 0.3s, color 0.3s;
+      border: 2px solid #fff;
+      text-shadow: 0 2px 8px #1e40af55;
+      display: inline-block;
+    }
+    body.dark .dev-label {
+      background: linear-gradient(90deg, #fbbf24 60%, #f59e42 100%);
+      color: #232b3b;
+      border: 2px solid #232b3b;
+      text-shadow: 0 2px 8px #fbbf2444;
+    }
+    .dev-svg {
+      width: 60px;
+      height: 60px;
+      vertical-align: middle;
+      margin-left: 10px;
+      filter: drop-shadow(0 4px 16px #2563eb44);
+      animation: floatDev 3.5s ease-in-out infinite alternate;
+    }
+    @keyframes floatDev {
+      0% { transform: translateY(0);}
+      100% { transform: translateY(-10px);}
+    }
+    .modal-box {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 6px 24px #2563eb33;
+      padding: 30px 24px 20px 24px;
+      min-width: 260px;
+      max-width: 90vw;
+      text-align: center;
+      position: absolute;
+      left: 50%; top: 50%; transform: translate(-50%,-50%);
+      display: none;
+      z-index: 1002;
+    }
+    .modal-box.active { display: block; }
+    .modal-box input[type="password"] {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1.5px solid #bfc9d9;
+      font-size: 1.05rem;
+      width: 80%;
+      margin-bottom: 12px;
+      outline: none;
+      text-align: center;
+      transition: border 0.2s;
+    }
+    .modal-box input[type="password"]:focus {
+      border: 1.5px solid #2563eb;
+    }
+    .modal-box .error {
+      color: #e74c3c;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      min-height: 22px;
+    }
+    .modal-box .close-btn {
+      background: #e74c3c;
+      color: #fff;
+      border-radius: 8px;
+      padding: 7px 18px;
+      font-size: 1rem;
+      margin-top: 10px;
+      border: none;
+      cursor: pointer;
+    }
+    .modal-box .close-btn:hover {
+      background: #c0392b;
+    }
+    @media (max-width: 500px) {
+      .settings-box { min-width: 90vw; padding: 10px 2px; }
+      .dev-label { font-size: 0.9rem; padding: 4px 7px; }
+      .dev-svg { width: 35px; height: 35px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="settings-box">
+    <h2>إعدادات المنصة</h2>
+    <div class="setting-row">
+      <label>الوضع الليلي/النهاري:</label>
+      <button class="theme-btn" id="themeBtn"><span id="themeIcon">🌙</span> <span id="themeText">وضع ليلي</span></button>
+    </div>
+    <div class="setting-row">
+      <label>تغيير كلمة المرور:</label>
+      <button id="passBtn">تعيين</button>
+    </div>
+    <div class="setting-row">
+      <label>المطور:</label>
+      <span class="dev-label">
+        <svg class="dev-svg" viewBox="0 0 120 120" fill="none">
+          <defs>
+            <radialGradient id="faceGrad" cx="60" cy="60" r="60" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#fffbe7"/>
+              <stop offset="100%" stop-color="#fbbf24"/>
+            </radialGradient>
+            <linearGradient id="hairGrad" x1="0" y1="0" x2="120" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#2563eb"/>
+              <stop offset="100%" stop-color="#1e40af"/>
+            </linearGradient>
+            <linearGradient id="shirtGrad" x1="0" y1="120" x2="120" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#2ecc71"/>
+              <stop offset="100%" stop-color="#3498db"/>
+            </linearGradient>
+          </defs>
+          <circle cx="60" cy="60" r="44" fill="url(#faceGrad)" stroke="#fbbf24" stroke-width="2"/>
+          <ellipse cx="60" cy="38" rx="38" ry="18" fill="url(#hairGrad)" />
+          <ellipse cx="45" cy="62" rx="5" ry="7" fill="#222"/>
+          <ellipse cx="75" cy="62" rx="5" ry="7" fill="#222"/>
+          <path d="M45 80 Q60 95 75 80" stroke="#e67e22" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <rect x="32" y="90" width="56" height="22" rx="12" fill="url(#shirtGrad)" />
+          <ellipse cx="45" cy="62" rx="8" ry="8" fill="none" stroke="#2563eb" stroke-width="2"/>
+          <ellipse cx="75" cy="62" rx="8" ry="8" fill="none" stroke="#2563eb" stroke-width="2"/>
+          <rect x="53" y="61" width="14" height="2" rx="1" fill="#2563eb"/>
+          <polygon points="60,18 65,35 60,32 55,35" fill="#fbbf24" stroke="#f59e42" stroke-width="1"/>
+        </svg>
+        أحمد السريحي - Developer
+      </span>
+    </div>
+  </div>
+
+  <!-- نافذة كلمة المرور -->
+  <div class="modal-box" id="passModal">
+    <h3>تعيين كلمة المرور</h3>
+    <div class="error" id="passError"></div>
+    <input type="password" id="newPassword" placeholder="أدخل كلمة المرور الجديدة" autocomplete="off" />
+    <br>
+    <input type="password" id="confirmPassword" placeholder="تأكيد كلمة المرور" autocomplete="off" />
+    <br>
+    <button onclick="saveNewPassword()">حفظ</button>
+    <button class="close-btn" onclick="closePassModal()">إغلاق</button>
+  </div>
+
+  <script>
+    // الوضع الليلي/النهاري
+    const themeBtn = document.getElementById('themeBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+    function setTheme(mode) {
+      if (mode === 'dark') {
+        document.body.classList.add('dark');
+        themeBtn.classList.add('night');
+        themeIcon.textContent = '☀️';
+        themeText.textContent = 'وضع نهاري';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.body.classList.remove('dark');
+        themeBtn.classList.remove('night');
+        themeIcon.textContent = '🌙';
+        themeText.textContent = 'وضع ليلي';
+        localStorage.setItem('theme', 'light');
+      }
+    }
+    themeBtn.onclick = function() {
+      setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
+    };
+    // تفعيل الوضع المحفوظ
+    window.addEventListener('DOMContentLoaded', function() {
+      setTheme(localStorage.getItem('theme') || 'light');
+    });
+
+    // كلمة المرور
+    document.getElementById('passBtn').onclick = function() {
+      document.getElementById('passModal').classList.add('active');
+      document.getElementById('passError').textContent = '';
+      document.getElementById('newPassword').value = '';
+      document.getElementById('confirmPassword').value = '';
+      setTimeout(() => document.getElementById('newPassword').focus(), 200);
+    };
+    function closePassModal() {
+      document.getElementById('passModal').classList.remove('active');
+    }
+    function saveNewPassword() {
+      const pass = document.getElementById('newPassword').value;
+      const confirm = document.getElementById('confirmPassword').value;
+      const error = document.getElementById('passError');
+      if (!pass || pass.length < 3) {
+        error.textContent = "يجب إدخال كلمة مرور من 3 أحرف أو أكثر.";
+        return;
+      }
+      if (pass !== confirm) {
+        error.textContent = "كلمتا المرور غير متطابقتين.";
+        return;
+      }
+      localStorage.setItem('platformPassword', pass);
+      error.textContent = "تم حفظ كلمة المرور بنجاح!";
+      setTimeout(() => {
+        closePassModal();
+        alert("تم تعيين كلمة المرور بنجاح!");
+      }, 700);
+    }
+  </script>
+</body>
+</html>
